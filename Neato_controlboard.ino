@@ -6,22 +6,19 @@ Alberto Naranjo
 
 Based on the control board v0.2 by Cheng-Lung Lee
 
-This code is tested on Arduino Mega 1280
+This code is tested on Arduino Mega 1280 and run on ADK
 I/O:
 Motor drive by low side driver IPS041L connect to PWM Pin4, Motor power from 5V
 Neato XV-11 LDS Vcc(red) : 5V
 Neato XV-11 LDS TX(Orange) : RX3
  
- */
-
+*/
 
 //Screen
 //________________________
-#include <UTFT.h>
-extern uint8_t BigFont[];
-
-UTFT myGLCD(ITDB32S,38,39,40,41);
-
+//#include <UTFT.h>
+//extern uint8_t BigFont[];
+//UTFT myGLCD(ITDB32S,38,39,40,41);
 
 double angle=0;
 int r=115;
@@ -31,11 +28,8 @@ int y2;
 int cY;
 int cX;
 
-
-
 //Control board
 //____________________________
-
 
 unsigned int distance;
 
@@ -50,7 +44,6 @@ unsigned char flag2=0;
 // Motor control
 const int DesiredRPM=300;  // Setting Desired RPM Here.
 const int MotorPWMPin=8;
-
 
 int inByte = 0;         // incoming serial byte
 unsigned char Data_status=0;
@@ -75,17 +68,15 @@ unsigned char PWM4duty=PWM4dutyMin;  // have to set a default value make motor s
     Serial.begin(115200);  // USB serial
     Serial3.begin(115200);  // XV-11 LDS data 
     
-
   // prints title with ending line break 
-  Serial.println("Arduino Neato XV-11 Motor control board v0.1 by Cheng-Lung Lee"); 
+  Serial.println("Ladar!"); 
   
   // Pick your magic number and drive your motor , 178 is 178/255*5V=3.49V
     analogWrite(MotorPWMPin, PWM4duty);
     
-    
     //______
     //Screen setup
-    myGLCD.InitLCD();
+    /* myGLCD.InitLCD();
     myGLCD.clrScr();
     
     myGLCD.setColor(0, 255, 0);
@@ -94,18 +85,17 @@ unsigned char PWM4duty=PWM4dutyMin;  // have to set a default value make motor s
 
     cY = myGLCD.getDisplayYSize()/2;
     cX = myGLCD.getDisplayXSize()/2;
-  
+    */
+    
     char CharMsg[4];
     itoa(r,CharMsg,10);
     
-    myGLCD.setFont(BigFont);
+    /*myGLCD.setFont(BigFont);
  
  //   myGLCD.print(CharMsg, 0, 0);
     myGLCD.print("7", 0, 0);
     myGLCD.print("m", 16*3, 0);
-  
-
-    
+    */
 }
 
 void loop() {
@@ -166,7 +156,6 @@ void readData(unsigned char inByte){
     Data_4deg_index=inByte-0xA0;
 //      Serial.print(Data_4deg_index, HEX);  
     
- 
     break;
     
     case 2: // Speed in RPH low byte
@@ -177,11 +166,8 @@ void readData(unsigned char inByte){
     SpeedRPHhighbyte=inByte;
     SpeedRPH=(SpeedRPHhighbyte<<8)|SpeedRPHLowbyte;
     
-    SpeedControl(DesiredRPM);    
-    
-    
+    SpeedControl(DesiredRPM);   
     break;
-   
     
     case 4:
     case 8:
@@ -201,8 +187,6 @@ void readData(unsigned char inByte){
     flag2=inByte & B01000000;
     
     distance=(distanceHigh<<8)|distanceLow;
-    
-    
 //   if (flag1==0 && flag2==0){
   
      if (true){
@@ -240,11 +224,7 @@ void readData(unsigned char inByte){
        break;
       }
             
-            
-            
       int angleIndex=Data_4deg_index*4 + dataIndex;
-
-
 
   if (flag1==0 && flag2==0){
   //   if (flag2==0){
@@ -254,8 +234,6 @@ void readData(unsigned char inByte){
       }else{
         distance_array[angleIndex]=0;
       }
-
-
 /*
     if (angleIndex==359){
         drawMap();
@@ -264,25 +242,14 @@ void readData(unsigned char inByte){
 */
   if (dataIndex==3 && Data_4deg_index==89) drawMap();
 
-
    }
-   
-   
-   
-
-
    break;    
-   
     
     //distance=(unsigned int)word(distance2,distance1);
     
     //distance&=0x3FFF; 
     
     //Draw this!
-    
-    
-
-    
     
     /*
     case 6:
@@ -301,21 +268,12 @@ void readData(unsigned char inByte){
    
     Data_status=0;
     Data_loop_index=0;
-    
     break;
-    
 */
-    
     default: // others do checksum
     
     break;
-    
-   
   } 
- 
-  
- 
-  
 }
 
 
@@ -360,7 +318,7 @@ void drawMap(){
    
    
    //myGLCD.drawCircle(cX,cY,rMin);
-   
+   /*
    int distX=r2*cos(rad_angle);
    int distY=r2*sin(rad_angle);
    
@@ -369,15 +327,12 @@ void drawMap(){
    
    //myGLCD.fillCircle(x2,y2,2);
    myGLCD.drawPixel(x2,y2);
-    
+   */
   }
-  
-  delay(1);
-  
 }
 
+
 void sensorMap(int degreeIndex, int degree,int distance){
-        
    int r2=map(distance, 0, 7000, 0, 115);
    //int r2=map(distance, 0, 10000, rMin, r);
    
@@ -393,12 +348,12 @@ void sensorMap(int degreeIndex, int degree,int distance){
 //    Serial.print(" "); 
 //    Serial.println(rad_angle); 
     
-    
+/*   
 //   myGLCD.setColor(0, 0, 0);
 //   myGLCD.drawPixel(x2,y2);
 //   myGLCD.drawLine(cX,cY,x2,y2);
    
-   myGLCD.setColor(0, 255, 0);
+   //myGLCD.setColor(0, 255, 0);
    
    //myGLCD.drawCircle(cX,cY,rMin);
    
@@ -416,7 +371,7 @@ void sensorMap(int degreeIndex, int degree,int distance){
    y2 = cY + r*sin(rad_angle);
    */  
    //myGLCD.drawLine(cX,cY,x2,y2);  
-   
+  */ 
 /*
     Serial.print(distX); 
     Serial.print(","); 
